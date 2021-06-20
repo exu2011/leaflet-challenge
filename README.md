@@ -20,5 +20,28 @@ Plot a second data set on our map.
 Add a number of base maps to choose from as well as separate out our two different data sets into overlays that can be turned on and off independently.
 Add layer controls to our map.
 
+First define all-week earthquake url and all-day earthquake 
 
+// Perform a GET request to the query URL
+// d3.json(dailyEarthquakeQueryUrl).then(function(data) {
+// Once we get a response, send the data.features object to the createFeatures function
+
+// Declare global variables: 
+// let maxDepth = 0;
+// let minDepth = 0;
+
+// Define a function we want to run once for each feature in the features array
+// Give each feature a popup describing the place and time of the earthquake
+// layer.bindPopup("<h3>" + feature.properties.place +
+//   "</h3><hr><p>" + new Date(feature.properties.time) + "</p>");
+
+// Create a GeoJSON layer containing the features array on the earthquakeData object
+// Run the onEachFeature function once for each piece of data in the array
+
+// return new L.circle(latlng,
+// Sending our earthquakes layer to the createMap function
+// Define streetmap and darkmap layers
+
+// Create our map, giving it the base stateMap layer and earthquakes layers to display on load
+// Create a legend that will provide context for the map data.
 

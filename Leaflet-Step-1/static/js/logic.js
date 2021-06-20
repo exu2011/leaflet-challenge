@@ -1,8 +1,11 @@
 let weeklyEarthquakeQueryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
 let dailyEarthquakeQueryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson";
+let colors = ["#3dca2b", "#c0e078", "#ffdab9", "#ff8800", "#f08080", "#ff0a54"];
 
 // Perform a GET request to the query URL
-d3.json(dailyEarthquakeQueryUrl).then(function(data) {
+// d3.json(dailyEarthquakeQueryUrl).then(function(data) {
+  d3.json(weeklyEarthquakeQueryUrl).then(function(data) {
+
   // Once we get a response, send the data.features object to the createFeatures function
   createFeatures(data.features);
   console.log(data.features);
@@ -51,17 +54,18 @@ function createFeatures(earthquakeData) {
   // Run the onEachFeature function once for each piece of data in the array
   var earthquakes = L.geoJSON(earthquakeData, {
     
-    // pointToLayer: function(feature, latlng) {
-    //   return new L.circle(latlng,
-    //     { 
-    //       radius: getCircleRadius (feature.properties.mag),
-    //       fillColor: getCircleColor(feature.geometry.coordinates[2]),
-    //       fillOpacity: 0.5,
-    //       color: "black",
-    //       stroke: true,
-    //       weight: 0.7
-    //     }); 
-    // }, // end function(feature, latlng)
+    pointToLayer: function(feature, latlng) {
+      return new L.circleMarker(latlng,
+      // return new L.circle(latlng,
+        { 
+          radius: getCircleRadius (feature.properties.mag), // Quake's mag decides the circle radius 
+          fillColor: getCircleColor(feature.geometry.coordinates[2]), // Quake's depth decides for the circle color
+          fillOpacity: 0.8,
+          color: "black",
+          stroke: true,
+          weight: 0.5
+        }); 
+    }, // end function(feature, latlng)
 
     onEachFeature: onEachFeature
   }); // end var earthquakes
@@ -114,26 +118,24 @@ function createMap(earthquakes) {
   });
 
   // Create a legend that will provide context for the map data.
-  let mapLegend = L.control ({
-    position: "bottomright"
-  });
+  //Ref: https://leafletjs.com/examples/choropleth/
+  let legend = L.control ({ position: "bottomright" });
 
-  mapLegend.onAdd = function(earthquakeMap) {
-    let divTagForLegend = L.DomUtil.create("div", "map-legend"),
-      colorGradients = ["#64F58D", "#9CFFD9", "#B2ABF2", "#F07167", "#C2E812", "#FE2036"];
-      legendLabels = ["-10-10", "10-30", "30-50", "50-70", "70-90", "90+"];
+  legend.onAdd = function(myMap) {
+    let div = L.DomUtil.create("div", "info legend"),
+      labels = ["-10-10", "10-30", "30-50", "50-70", "70-90", "90+"];
 
     // Create the map legend object
-    for (let i = 0; i < colorGradients.length; i++) {
-      divTagForLegend.innerHTML += 
-        '<i style="background:' + colorGradients[i] + '"></i> ' + 
-        legendLabels[i] + '<br>';
+    for (let i = 0; i < colors.length; i++) {
+      div.innerHTML += 
+        '<i style="background:' + colors[i] + '"></i> ' + 
+        labels[i] + '<br>';
     }
 
-    return divTagForLegend;
+    return div;
   }; // end magLegend.onAdd 
 
-  mapLegend.addTo(myMap);
+  legend.addTo(myMap);
     
 } // end CreateMap()
 
@@ -152,46 +154,26 @@ function createMap(earthquakes) {
   function getCircleColor(quakeDepth) {
 
     if (quakeDepth > -10 && quakeDepth <= 10) {
-      return "#64F58D"; //Spring green
-    } else if (quakeDepth > 10 && quakeDepth <= 30) {
-      return "#9CFFD9"; // light green
+      console.log(`quakeDepth = ${quakeDepth}, color = Spring green.`);
+
+      return colors[0]; //Spring green
+    } else if (quakeDepth > 10 && quakeDepth <= 30) {      
+      return  colors[1]; // light green
     } else if (quakeDepth > 30 && quakeDepth <= 50) {
-      return "#B2ABF2"; // purple
+      return  colors[2]; // light peach
     } else if (quakeDepth > 50 && quakeDepth <= 70) {
-      return "#F07167"; //bright peach
+      return  colors[3]; //dark peach
     } else if (quakeDepth > 70 && quakeDepth <= 90) {
-      return "#C2E812"; // bitter lemon color
+      return  colors[4]; // pink
     } else if (quakeDepth > 90 ) {
-      return "#FE2036"; //bring red big numbers
+      return  colors[5]; //bright red
     }
 
-    // if (quakeDepth >= -10 && quakeDepth <= 10) {
-    //   return "#64F58D"; //Spring green
-    // } else if (quakeDepth < 40) {
-    //   return "#39A0ED"; // light cyan
-    // } else if (quakeDepth < 60) {
-    //   return "#9CFFD9"; // light green
-    // } else if (quakeDepth < 80) {
-    // return "#3AA7A3"; // verdigris (blue/greenish)
-    // } else if (quakeDepth < 100) {
-    //   return "#B2ABF2"; // purple
-    // } else if (quakeDepth < 200) {
-    //   return "#0081A7"; // darker blue
-    // } else if (quakeDepth < 300) {
-    //   return "#F07167"; //bright peach
-    // } else if (quakeDepth < 400) {
-    //   return "#8DF7AD";
-    // } else if (quakeDepth < 500) {
-    //   return "#C2E812"; // bitter lemon color
-    // } else if (quakeDepth < 600) {
-    //   return "#F679A7"; // bright peach
-    // } else {
-    //   return "#FE2036"; //bring red big numbers
-    // }
+
   };
 
   function getCircleRadius(quakeMagnitude) {
-    return quakeMagnitude * 1000; 
+    return quakeMagnitude * 5; 
   }
 
 
