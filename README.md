@@ -44,4 +44,10 @@ First define all-week earthquake url and all-day earthquake
 
 // Create our map, giving it the base stateMap layer and earthquakes layers to display on load
 // Create a legend that will provide context for the map data.
+//Ref: https://leafletjs.com/examples/choropleth/
+// Create the map legend object
+// helper functions: 
+// QuakeDepth is the 3rd coords
+// Ref: https://coolors.co/ to generate color palette
+// 
 
